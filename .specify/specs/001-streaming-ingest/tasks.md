@@ -8,5 +8,6 @@
 - [ ] Run `docker compose up -d` and wait for Kafka healthy
 - [ ] Run producer; confirm logs show ticks
 - [ ] Run `kafka-console-consumer` and see JSON for all 5 symbols
+- [ ] Run all checks in [test.md](test.md); sign off
 - [ ] Tick all acceptance criteria in `spec.md`
 - [ ] Update `masterplan.md` — spec 001 status → ✅ Done

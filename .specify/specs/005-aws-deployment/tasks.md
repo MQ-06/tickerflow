@@ -8,5 +8,6 @@
 - [ ] Run Athena query in AWS console
 - [ ] Confirm CloudWatch logs
 - [ ] Document `terraform destroy` in spec or README
+- [ ] Run all checks in [test.md](test.md); sign off
 - [ ] Tick acceptance criteria in `spec.md`
 - [ ] Update `masterplan.md` — spec 005 → ✅ Done

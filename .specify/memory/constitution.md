@@ -53,6 +53,11 @@ The Kafka consumer resumes from the last committed offset (at-least-once deliver
 Airflow retries failed DAG tasks per its default retry policy. Lake writes use
 unique filenames per batch so restarts do not overwrite prior data.
 
+### 8. Test before done
+
+Each spec folder has `test.md`. A phase is not complete until those tests pass
+and acceptance criteria in `spec.md` are checked off.
+
 ## Stable data contract
 
 ### Tick fields

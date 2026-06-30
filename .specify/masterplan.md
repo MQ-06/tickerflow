@@ -2,7 +2,7 @@
 
 > **Agent entry point.** Read this file first. It tracks project status and links
 > to every spec and decision. Do not code without reading the relevant
-> `spec.md` → `plan.md` → `tasks.md` for the current phase.
+> `spec.md` → `plan.md` → `tasks.md` → `test.md` for the current phase.
 
 ## What this project is
 
@@ -42,6 +42,7 @@ Full detail: [memory/constitution.md](memory/constitution.md)
 - Swappable data source — synthetic now, real API later without downstream changes.
 - Env-based config — no hardcoded endpoints; switch local ↔ AWS via env vars.
 - Every major choice has an ADR — no unexplained tool picks.
+- Every spec folder includes `test.md` — what to verify and how before marking done.
 
 ## Phase / spec status
 
@@ -79,6 +80,7 @@ Full script: [specs/006-demo-presentation/](specs/006-demo-presentation/)
 
 1. Check the status table above.
 2. Open `specs/NNN-name/spec.md` — what and why (no implementation detail).
-3. Read `plan.md` — how. Then `tasks.md` — do checklist.
-4. Implement task by task; update status here when a phase completes.
-5. Hit a tradeoff mid-build? Write an ADR first, then continue.
+3. Read `plan.md` — how. Then `tasks.md` — build checklist.
+4. Run `test.md` — verify acceptance criteria before marking done.
+5. Implement task by task; update status here when a phase completes.
+6. Hit a tradeoff mid-build? Write an ADR first, then continue.

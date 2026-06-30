@@ -6,5 +6,6 @@
 - [ ] Implement `src/consumer/main.py` (consume, validate, batch, write)
 - [ ] Inject one bad tick manually; confirm quarantine path
 - [ ] Confirm Parquet files in `raw/symbol=AAPL/date=…/`
+- [ ] Run all checks in [test.md](test.md); sign off
 - [ ] Tick acceptance criteria in `spec.md`
 - [ ] Update `masterplan.md` — spec 002 → ✅ Done
