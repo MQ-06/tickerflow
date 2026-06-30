@@ -5,34 +5,52 @@
 
 ## Problem
 
-Data in the lake is useless if nobody can ask questions. We need SQL access
-without loading data into a traditional database.
+Data sitting in Parquet files is not useful until someone can ask questions of
+it. Loading into a traditional database first adds cost and latency that
+ad-hoc analytical queries do not need.
 
 ## User story
 
-As an analyst (or lead in a demo), I want to run SQL against stored ticks so I
-can see averages, counts, and latest prices per symbol.
+As a data engineer (and as my lead watching the demo), I want to run plain
+SQL directly against the lake so I can verify data is flowing and answer
+questions like "what is AAPL's average price today" without an ETL step.
 
 ## Scope
 
 ### In scope
 
-- Saved SQL query files for demo
-- Local query script using DuckDB over Parquet (MinIO or local mount)
-- Queries: avg price by symbol, tick count, latest price per symbol
-- Document equivalent Athena SQL for AWS (spec 005)
+- DuckDB queries against local Parquet files (path strategy decided in `plan.md`:
+  read from MinIO mount, S3-compatible path, or synced local copy)
+- Example queries: latest tick per symbol, average price by symbol, tick count by symbol
+- `scripts/local_query.py` to run queries on demand and print table output
+- SQL kept to ANSI subset that DuckDB and Athena both support (eases spec 005)
 
 ### Out of scope
 
-- BI dashboards
-- Glue/Athena setup (spec 005)
+- Athena / Glue setup (spec 005)
+- Query performance tuning or indexing
+- UI or dashboard — terminal output is sufficient
+
+## Inputs / outputs
+
+| Step | Input | Output |
+|------|-------|--------|
+| Query | SQL + path to Parquet lake | Result rows (printed table) |
 
 ## Acceptance criteria
 
-- [ ] `scripts/local_query.py` runs demo queries and prints results
-- [ ] Results match known data after producer has run 5+ minutes
-- [ ] SQL files live in `queries/` and are readable in demo
+- [ ] `scripts/local_query.py` runs each example query against live data from spec 002 and returns sensible results
+- [ ] "Latest tick per symbol" returns exactly 5 rows (one per constitution symbol)
+- [ ] Average price per symbol returns plausible values within the random-walk seed range from spec 001
+- [ ] Tick count query returns > 0 after producer has run for at least 2 minutes
+
+## Risks
+
+| Risk | Mitigation |
+|------|------------|
+| DuckDB SQL diverges from Athena syntax | Stick to standard ANSI SQL both engines support |
+| No data in lake yet | Script prints a clear message instead of crashing |
 
 ## References
 
-- Constitution — partition paths
+- [Constitution](../../memory/constitution.md) — tech stack (DuckDB local / Athena AWS)

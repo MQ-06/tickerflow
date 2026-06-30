@@ -1,41 +1,61 @@
-# Spec: Batch Enrichment
+# Spec: Batch Enrichment (Airflow)
 
 **Status:** draft  
-**Depends on:** 002-validation-lake, 003-query-layer (queries can reference enriched later)
+**Depends on:** 002-validation-lake, 003-query-layer
 
 ## Problem
 
-Some metrics (OHLC, moving averages) need a window of historical ticks. Computing
-them on every single tick is wasteful. They belong on a schedule over accumulated
-lake data.
+Some metrics (moving averages, daily OHLC, buy vs sell volume splits) cannot be
+computed from a single tick — they need a window of accumulated history. Doing
+this on every tick would be wasteful; it belongs on a schedule.
 
 ## User story
 
-As a data engineer, I want Airflow to run every 15 minutes, read raw Parquet,
-compute per-symbol OHLC and volume, and write enriched Parquet so analysts can
-query summaries without scanning every tick.
+As a data engineer, I want a scheduled job that reads accumulated raw ticks and
+computes derived metrics, so analysis is available without recomputing on every
+single event.
 
 ## Scope
 
 ### In scope
 
-- Airflow in Docker Compose (webserver + scheduler)
-- DAG `stock_enrichment` on 15-minute schedule
-- Read `raw/`, write `enriched/` with OHLC columns
-- Airflow UI shows successful runs
+- One Airflow DAG on a configurable schedule (default: every 15 minutes)
+- Read raw Parquet lake since last successful DAG run
+- Compute per symbol: 5-minute moving average, OHLC (open/high/low/close), total volume
+- Compute per symbol: **buy volume vs sell volume** (uses constitution `side` field)
+- Write enriched dataset to `enriched/symbol={symbol}/date={date}/`
+- DAG visible and runnable in Airflow UI (demo requirement)
+- Failed tasks retry per Airflow defaults; prior enriched data not corrupted
 
 ### Out of scope
 
-- Complex dependencies across external systems
-- Real-time stream processing (Flink/Spark Streaming)
+- Backfilling historical runs beyond one manual test
+- Complex windowing beyond moving average, OHLC, and buy/sell splits
+- Alerting on enrichment failure (CloudWatch in spec 005, AWS-side)
+
+## Inputs / outputs
+
+| Step | Input | Output |
+|------|-------|--------|
+| Read | Raw Parquet since last run | In-memory table (pandas/pyarrow) |
+| Compute | Raw ticks | Moving avg, OHLC, buy/sell volume per symbol |
+| Write | Enriched rows | Parquet under `enriched/symbol={symbol}/date={date}/` |
 
 ## Acceptance criteria
 
-- [ ] Airflow UI accessible at `localhost:8080`
-- [ ] DAG run succeeds (green)
-- [ ] `enriched/` contains Parquet with open, high, low, close, volume columns
-- [ ] DuckDB can query enriched table
+- [ ] DAG appears in Airflow UI and runs successfully on schedule (or manual trigger)
+- [ ] Enriched Parquet contains `open`, `high`, `low`, `close`, `volume`, `buy_volume`, `sell_volume`, and `moving_avg` columns
+- [ ] OHLC values match a manual calculation on a small known sample
+- [ ] Buy/sell volume splits sum to total volume for each symbol-window
+- [ ] Simulated failure (e.g. MinIO unavailable mid-run) does not corrupt prior enriched files; Airflow shows failure clearly and retries
+
+## Risks
+
+| Risk | Mitigation |
+|------|------------|
+| Airflow setup eats build time | Base on official Airflow docker-compose quickstart; do not build from scratch |
+| OHLC wrong across partition boundaries | Test one symbol with a small known dataset first |
 
 ## References
 
-- Constitution — enriched path pattern
+- [Constitution](../../memory/constitution.md) — `side` field, enriched path, Airflow retry principle
