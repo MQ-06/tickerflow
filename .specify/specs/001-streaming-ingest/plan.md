@@ -2,30 +2,35 @@
 
 ## Approach
 
-Single `docker-compose.yml` at repo root. Python producer uses `confluent-kafka`
-(or `kafka-python`) to publish JSON. One Kafka broker is enough for local dev.
+Single `docker-compose.yml` at repo root. Python producer uses **`kafka-python`**
+(pure Python, no `librdkafka` C dependency). One Kafka broker in **KRaft mode**
+(no Zookeeper).
+
+**Trade-off:** `kafka-python` has a lower throughput ceiling than `confluent-kafka`.
+At ~1 tick/sec and 5 symbols that is irrelevant.
 
 ## Architecture (this feature)
 
 ```text
-producer (Python) --JSON--> Kafka topic: stock-ticks
-                              ├── partition 0 (hash of symbols)
+producer (Python) --JSON--> Kafka topic: stock-ticks (KRaft, 1 broker)
+                              ├── partition 0
                               ├── partition 1
                               └── partition N
 ```
 
-Use default partitioner with key = `symbol` so same symbol always maps to same
-partition (ordering per symbol).
+Partition key = `symbol` for per-symbol ordering.
 
-## Files to create
+## Files
 
 | File | Purpose |
 |------|---------|
-| `docker-compose.yml` | Kafka + Zookeeper (or KRaft single node) |
-| `src/common/config.py` | Read `KAFKA_BOOTSTRAP`, `TICK_INTERVAL_SEC` from env |
-| `src/producer/main.py` | Synthetic generator + publish loop |
-| `requirements.txt` | `confluent-kafka`, minimal deps |
-| `.env.example` | Document env vars |
+| `docker-compose.yml` | Kafka KRaft + healthcheck |
+| `src/common/config.py` | Env-based settings |
+| `src/producer/tick_generator.py` | Synthetic tick random walk |
+| `src/producer/main.py` | Publish loop with Kafka retry |
+| `requirements.txt` | `kafka-python==2.0.2` |
+| `.env.example` | Documented env vars |
+| `scripts/verify_spec001.py` | Automated e2e verification |
 
 ## Environment variables
 
@@ -36,21 +41,11 @@ partition (ordering per symbol).
 | `TICK_INTERVAL_SEC` | `1` | Seconds between ticks |
 | `SYMBOLS` | `AAPL,MSFT,GOOGL,TSLA,AMZN` | Comma-separated |
 
-## Synthetic price model
-
-- Starting prices per symbol (hardcoded seeds, e.g. AAPL ≈ 180)
-- Each tick: `price *= (1 + random.gauss(0, 0.001))` (simple random walk)
-- Volume: random int 100–10000
-- Side: random `buy` / `sell`
-- Timestamp: `datetime.now(timezone.utc).isoformat()`
-
-## Risks
-
-| Risk | Mitigation |
-|------|------------|
-| Kafka slow to start | Producer retries connection with backoff |
-| Port 9092 in use | Document in README; use compose port override |
-
 ## Alternatives (summary)
 
-Full detail in ADR-002. RabbitMQ rejected for lack of replay.
+| Choice | Why this | Why not the other |
+|--------|----------|-------------------|
+| KRaft | Fewer containers, faster startup | Zookeeper is legacy overhead |
+| kafka-python 2.0.2 | Pure Python, stable API | confluent-kafka needs native libs |
+
+Full detail: [ADR-002](../../memory/decisions/ADR-002-kafka.md).

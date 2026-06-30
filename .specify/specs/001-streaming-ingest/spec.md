@@ -1,6 +1,6 @@
 # Spec: Streaming Ingest
 
-**Status:** draft  
+**Status:** done  
 **Depends on:** none (first build phase)
 
 ## Problem
@@ -19,11 +19,11 @@ symbol.
 
 ### In scope
 
-- Docker Compose stack with Kafka (and Zookeeper or KRaft)
-- Python producer: synthetic ticks for 5 symbols
+- Docker Compose stack with Kafka in **KRaft mode** (no Zookeeper)
+- Python producer: synthetic ticks for 5 constitution symbols
 - Publish JSON to topic `stock-ticks`, partition key = `symbol`
 - Configurable tick interval via env var
-- Verify messages visible with Kafka console consumer
+- Producer retries Kafka connection with backoff
 
 ### Out of scope
 
@@ -42,13 +42,14 @@ symbol.
 
 ## Acceptance criteria
 
-- [ ] `docker compose up` starts Kafka without errors
-- [ ] Producer runs and logs each published tick
-- [ ] `kafka-console-consumer` shows JSON ticks on `stock-ticks`
-- [ ] All 5 symbols appear within 30 seconds
-- [ ] Ticks for same symbol maintain publish order
+- [x] `docker compose up` starts Kafka (KRaft) without errors
+- [x] Producer runs and logs each published tick
+- [x] `kafka-console-consumer` shows JSON ticks on `stock-ticks` for all 5 symbols within 30 seconds
+- [x] Ticks for the same symbol maintain publish order
+- [x] Stopping and restarting the producer resumes publishing without manual Kafka cleanup
 
 ## References
 
 - [ADR-001](../../memory/decisions/ADR-001-synthetic-data.md) — synthetic data
 - [ADR-002](../../memory/decisions/ADR-002-kafka.md) — why Kafka
+- [Constitution](../../memory/constitution.md) — fixed symbol list, restart principle

@@ -124,6 +124,6 @@ Run: `pytest tests/unit -q`
 
 ## Sign-off
 
-- [ ] T1–T6 passed
-- [ ] Tick acceptance criteria in `spec.md` checked
-- [ ] Update `masterplan.md` — spec 001 → ✅ Done
+- [x] T1–T6 passed
+- [x] Tick acceptance criteria in `spec.md` checked
+- [x] Update `masterplan.md` — spec 001 → ✅ Done
