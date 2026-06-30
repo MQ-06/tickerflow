@@ -31,6 +31,22 @@ python scripts/verify_spec002.py
 
 MinIO console: http://localhost:9001 (`minioadmin` / `minioadmin`)
 
+## Quick start (spec 003 — query layer)
+
+```bash
+docker compose up -d
+pip install -r requirements.txt
+
+# With producer + consumer running (data in lake):
+python scripts/local_query.py
+
+# Single query:
+python scripts/local_query.py --query queries/latest_ticks.sql
+
+# Verify:
+python scripts/verify_spec003.py
+```
+
 Copy `.env.example` to `.env` to override endpoints and batch settings.
 
 ## Tests

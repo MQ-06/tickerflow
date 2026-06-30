@@ -50,14 +50,14 @@ Full detail: [memory/constitution.md](memory/constitution.md)
 |---|-------------|------|--------|
 | 001 | [streaming-ingest](specs/001-streaming-ingest/) | Producer publishes ticks to Kafka | ✅ Done |
 | 002 | [validation-lake](specs/002-validation-lake/) | Validate with Pydantic, write Parquet to lake | ✅ Done |
-| 003 | [query-layer](specs/003-query-layer/) | SQL queries via DuckDB / Athena | 🟨 Spec written |
+| 003 | [query-layer](specs/003-query-layer/) | SQL queries via DuckDB / Athena | ✅ Done |
 | 004 | [batch-enrichment](specs/004-batch-enrichment/) | Airflow DAG for OHLC / moving averages | 🟨 Spec written |
 | 005 | [aws-deployment](specs/005-aws-deployment/) | Terraform + live AWS pipeline | 🟨 Spec written |
 | 006 | [demo-presentation](specs/006-demo-presentation/) | Friday demo script and fallbacks | 🟨 Spec written |
 
 **Status key:** ⬜ Not started · 🟨 Spec written · 🟦 Planned · 🟧 In progress · ✅ Done
 
-**Current focus:** Phase 003 — query layer
+**Current focus:** Phase 004 — batch enrichment (Airflow)
 
 ## Decisions log (ADRs)
 

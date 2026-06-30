@@ -111,6 +111,6 @@ functions (`read_parquet` path syntax differs — table name swap only on AWS).
 
 ## Sign-off
 
-- [ ] T1–T6 passed
-- [ ] Acceptance criteria in `spec.md` checked
-- [ ] Update `masterplan.md` — spec 003 → ✅ Done
+- [x] T1–T6 passed
+- [x] Acceptance criteria in `spec.md` checked
+- [x] Update `masterplan.md` — spec 003 → ✅ Done

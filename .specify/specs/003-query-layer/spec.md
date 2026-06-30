@@ -1,6 +1,6 @@
 # Spec: Query Layer
 
-**Status:** draft  
+**Status:** done  
 **Depends on:** 002-validation-lake
 
 ## Problem
@@ -18,9 +18,9 @@ can see averages, counts, and latest prices per symbol.
 ### In scope
 
 - Saved SQL query files for demo
-- Local query script using DuckDB over Parquet (MinIO or local mount)
+- Local query script using DuckDB over Parquet (MinIO via httpfs)
 - Queries: avg price by symbol, tick count, latest price per symbol
-- Document equivalent Athena SQL for AWS (spec 005)
+- Athena parity notes in `queries/README.md` (spec 005)
 
 ### Out of scope
 
@@ -29,9 +29,9 @@ can see averages, counts, and latest prices per symbol.
 
 ## Acceptance criteria
 
-- [ ] `scripts/local_query.py` runs demo queries and prints results
-- [ ] Results match known data after producer has run 5+ minutes
-- [ ] SQL files live in `queries/` and are readable in demo
+- [x] `scripts/local_query.py` runs demo queries and prints results
+- [x] Results match known data after producer has run 5+ minutes
+- [x] SQL files live in `queries/` and are readable in demo
 
 ## References
 
