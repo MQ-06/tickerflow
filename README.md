@@ -7,24 +7,31 @@ Real-time stock tick pipeline: Kafka → validation → Parquet lake → SQL →
 ## Quick start (spec 001 — streaming ingest)
 
 ```bash
-# 1. Start Kafka (KRaft)
 docker compose up -d
-
-# 2. Install Python deps
 pip install -r requirements.txt
-
-# 3. Run producer
 python -m src.producer.main
-
-# 4. Verify (separate terminal, with producer running)
 python scripts/verify_spec001.py
-
-# 5. Or inspect manually
-docker compose exec kafka /opt/kafka/bin/kafka-console-consumer.sh \
-  --bootstrap-server localhost:9092 --topic stock-ticks --from-beginning --timeout-ms 10000
 ```
 
-Copy `.env.example` to `.env` to override `KAFKA_BOOTSTRAP`, `TICK_INTERVAL_SEC`, etc.
+## Quick start (spec 002 — validation & lake)
+
+```bash
+docker compose up -d          # Kafka + MinIO
+pip install -r requirements.txt
+
+# Terminal 1 — producer
+python -m src.producer.main
+
+# Terminal 2 — consumer
+python -m src.consumer.main
+
+# Terminal 3 — verify (or self-contained):
+python scripts/verify_spec002.py
+```
+
+MinIO console: http://localhost:9001 (`minioadmin` / `minioadmin`)
+
+Copy `.env.example` to `.env` to override endpoints and batch settings.
 
 ## Tests
 

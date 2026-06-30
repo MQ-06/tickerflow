@@ -1,6 +1,6 @@
-# Spec: Validation & Data Lake
+# Spec: Validation & Lake Storage
 
-**Status:** draft  
+**Status:** done  
 **Depends on:** 001-streaming-ingest
 
 ## Problem
@@ -43,10 +43,10 @@ analysts only query clean data.
 
 ## Acceptance criteria
 
-- [ ] Tick with `price: -1` lands in quarantine, not `raw/`
-- [ ] Valid ticks appear as Parquet under correct partition paths
-- [ ] Consumer survives restart and continues from last offset
-- [ ] MinIO bucket `stock-lake` created on first run
+- [x] Tick with `price: -1` lands in quarantine, not `raw/`
+- [x] Valid ticks appear as Parquet under correct partition paths
+- [x] Consumer survives restart and continues from last offset
+- [x] MinIO bucket `stock-lake` created on first run
 
 ## References
 
